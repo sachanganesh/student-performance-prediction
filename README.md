@@ -24,6 +24,8 @@ I did not consider features G1 and G2. These features track the periodic grades 
 
 The feature G3 is the target prediction. It originally had a range of values from 0 to 20, which I mapped into a binary space. If the target value was >= 10 then it was passing (mapped to a 1), and otherwise it would be failing (mapped to a 0).
 
+After using both a Random Forest and PCA to determine the weights and importances of the various features in the dataset, it became apparent that were no single features that heavily affected the prediction of G3. All features were required, it seemed.
+
 ## Development Process and Results ##
 
 I initially considered a Gaussian Naive Bayes Classifier since I've found it to be a very useful classifier across the board. I also noted that the data features appeared to be independent, which was good for the classifier since it assumes that inherently. I originally had an accuracy percentage ~1% below the paper's reported accuracy of 67.1%. After experimenting with many other models, I found that the Gaussian Naive Bayes Classifier had the most potential.
