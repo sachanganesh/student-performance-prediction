@@ -87,7 +87,7 @@ def biased_naive_bayes(df):
     for i in (0, 3):
         gnb.partial_fit(X_fail, Y_fail, [0, 1])
 
-    print("\n\nGuassian Naive Bayes (Boosted) Accuracy: ", gnb.score(X, Y))
+    print("\n\nGuassian Naive Bayes (Biased) Accuracy: ", gnb.score(X, Y))
     confuse(Y, gnb.predict(X))
 
     return gnb
@@ -101,6 +101,39 @@ def naive_bayes(X_train, Y_train, X_test, Y_test):
 
     return gnb
 
+""" Bernoulli Naive Bayes Binary Classifier """
+def bern_naive_bayes(df):
+    fail_df = df.copy(deep=True)
+    pass_df = df.copy(deep=True)
+
+    # Target values are G3
+    Y = df.pop("G3")
+    Y_fail = fail_df.pop("G3")
+    Y_pass = pass_df.pop("G3")
+
+    # Feature set is remaining features
+    X = df
+    X_fail = fail_df
+    X_pass = pass_df
+
+    bnb = BernoulliNB()
+    bnb.partial_fit(X_fail, Y_fail, [0, 1])
+    bnb.partial_fit(X_pass, Y_pass, [0, 1])
+
+    print("\n\nBernoulli Naive Bayes Accuracy: ", bnb.score(X, Y))
+    confuse(Y, bnb.predict(X))
+
+    return bnb
+
+""" Multinomial Naive Bayes Binary Classifier """
+def mult_naive_bayes(X_train, Y_train, X_test, Y_test):
+    mnb = MultinomialNB()
+    mnb.fit(X_train, Y_train)
+    print("\n\nMultinomial Naive Bayes Accuracy: ", mnb.score(X_test, Y_test))
+    confuse(Y_test, mnb.predict(X_test))
+
+    return mnb
+
 """ Logistic Regression Classifier """
 def log_regression(X_train, Y_train, X_test, Y_test):
     lrc = LogisticRegression(penalty="l1")
@@ -110,6 +143,20 @@ def log_regression(X_train, Y_train, X_test, Y_test):
 
     return lrc
 
+""" Random Forest Classifier """
+def random_forest_feature_importance(X_train, Y_train, X_test, Y_test):
+    feat_labels = df.columns
+    forest = RandomForestClassifier(n_estimators=10000, random_state=0, n_jobs=-1)
+    forest.fit(X_train, Y_train)
+    importances = forest.feature_importances_
+    indices = np.argsort(importances)[::-1]
+    print("\n\nRandom Forest Accuracy: ", forest.score(X_test, Y_test))
+    print("\nApparent Feature Importances: ")
+    for f in range(X_train.shape[1]):
+        print("%2d) %-*s %f" % (f + 1, 30, feat_labels[indices[f]], importances[indices[f]]))
+
+    return forest
+
 def main():
     # For each nominal feature, encode to ordinal values
     class_le = LabelEncoder()
@@ -117,7 +164,7 @@ def main():
         df[column] = class_le.fit_transform(df[column].values)
 
     """ Remove periodic grade features """
-    df.drop(["G1", "G2"], axis = 1, inplace=True)
+    # df.drop(["G1", "G2"], axis = 1, inplace=True)
     # df.drop(["G1", "G2", "romantic", "Dalc", "sex", "traveltime", "paid", "activities", "nursery", "famsup", "address", "famsize", "schoolsup", "internet", "higher", "school", "Pstatus"], axis=1, inplace=True)
 
     # Encode G3 as pass or fail binary values
