@@ -34,7 +34,9 @@ I then considered the false positive ratio of the results, which, in my approach
 
 I considered "boosting" the model by manually making it more biased towards identifying students who would fail. One of the benefits of the Naive Bayes Classifier is that it is an "on-line" classifier, or one that can partially train using new data. I iteratively trained the model on failure data multiple times to achieve a final model with an accuracy of 72% and the lowest false positive ratio of 0.42.
 
-It is obvious that if I included the G1 and G2 factors, the accuracy of the model would improve, which is also indicated by the paper.
+When I included the G1 and G2 factors, the accuracy of the boosted model improved, which was foreseeable given the correlation between periodic grade standings and final grades. However, after including these features, the boosted model performed worse than the classic model (i.e. trained without biased iteration).
+
+My assumption is that having both models available would provide a great amount of insight; as periodic grades are revealed, the boosted model can be relied upon less and instead one can favor the classically trained model.
 
 ## Addendum ##
 
