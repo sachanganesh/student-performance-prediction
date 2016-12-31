@@ -29,7 +29,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 
 def split_data(X, Y):
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
+    return train_test_split(X, Y, test_size=0.3, random_state=0)
 
 """ Confusion Matrix """
 def confuse(y_true, y_pred):
@@ -92,6 +92,32 @@ def biased_naive_bayes(df):
 
     return gnb
 
+def biased_naive_bayes2(df, X_test, Y_test):
+    fail_df = df.copy(deep=True).loc[df["G3"] == 0]
+    pass_df = df.copy(deep=True).loc[df["G3"] == 1]
+
+    # Target values are G3
+    Y = df.pop("G3")
+    Y_fail = fail_df.pop("G3")
+    Y_pass = pass_df.pop("G3")
+
+    # Feature set is remaining features
+    X = df
+    X_fail = fail_df
+    X_pass = pass_df
+
+    gnb = GaussianNB()
+    for i in (0, 3):
+        gnb.partial_fit(X_fail, Y_fail, [0, 1])
+    gnb.partial_fit(X_pass, Y_pass, [0, 1])
+    for i in (0, 3):
+        gnb.partial_fit(X_fail, Y_fail, [0, 1])
+
+    print("\n\nGuassian Naive Bayes (Boosted) Accuracy: ", gnb.score(X_test, Y_test))
+    confuse(Y, gnb.predict(X))
+
+    return gnb
+
 def naive_bayes(X_train, Y_train, X_test, Y_test):
     gnb = GaussianNB()
     gnb.fit(X_train, Y_train)
@@ -117,7 +143,7 @@ def main():
         df[column] = class_le.fit_transform(df[column].values)
 
     """ Remove periodic grade features """
-    df.drop(["G1", "G2"], axis = 1, inplace=True)
+    df.drop(["G1", "G2"], axis = 1, inplace = True)
     # df.drop(["G1", "G2", "romantic", "Dalc", "sex", "traveltime", "paid", "activities", "nursery", "famsup", "address", "famsize", "schoolsup", "internet", "higher", "school", "Pstatus"], axis=1, inplace=True)
 
     # Encode G3 as pass or fail binary values
@@ -146,11 +172,16 @@ def main():
     X_pca, pca = principle_component_analysis(X, n_components=11)
 
     # Split data into training and testing sets
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
+    X_train, X_test, Y_train, Y_test = split_data(X, Y)
 
     print("\nPCA Ratios: ", pca.explained_variance_ratio_)
 
     biased_naive_bayes(df_orig)
+
+    # Attempt to split data before boosting for fair evaluation
+    X_train = X_train.assign(G3 = Y_train.values)
+    bay = biased_naive_bayes2(X_train, X_test, Y_test)
+    joblib.dump(bay, "./models/best_fpr.pkl")
     
     clf = naive_bayes(X_train, Y_train, X_test, Y_test)
     joblib.dump(clf, "./models/latest_build.pkl")
