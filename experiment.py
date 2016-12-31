@@ -66,33 +66,7 @@ def svm(X_train, Y_train, X_test, Y_test):
     return svc
 
 """ Gaussian Naive Bayes Binary Classifier """
-def biased_naive_bayes(df):
-    fail_df = df.copy(deep=True).loc[df["G3"] == 0]
-    pass_df = df.copy(deep=True).loc[df["G3"] == 1]
-
-    # Target values are G3
-    Y = df.pop("G3")
-    Y_fail = fail_df.pop("G3")
-    Y_pass = pass_df.pop("G3")
-
-    # Feature set is remaining features
-    X = df
-    X_fail = fail_df
-    X_pass = pass_df
-
-    gnb = GaussianNB()
-    for i in (0, 3):
-        gnb.partial_fit(X_fail, Y_fail, [0, 1])
-    gnb.partial_fit(X_pass, Y_pass, [0, 1])
-    for i in (0, 3):
-        gnb.partial_fit(X_fail, Y_fail, [0, 1])
-
-    print("\n\nGuassian Naive Bayes (Boosted) Accuracy: ", gnb.score(X, Y))
-    confuse(Y, gnb.predict(X))
-
-    return gnb
-
-def biased_naive_bayes2(df, X_test, Y_test):
+def biased_naive_bayes(df, X_test, Y_test):
     fail_df = df.copy(deep=True).loc[df["G3"] == 0]
     pass_df = df.copy(deep=True).loc[df["G3"] == 1]
 
@@ -176,12 +150,9 @@ def main():
 
     print("\nPCA Ratios: ", pca.explained_variance_ratio_)
 
-    biased_naive_bayes(df_orig)
-
     # Attempt to split data before boosting for fair evaluation
     X_train = X_train.assign(G3 = Y_train.values)
-    bay = biased_naive_bayes2(X_train, X_test, Y_test)
-    joblib.dump(bay, "./models/best_fpr.pkl")
+    biased_naive_bayes(X_train, X_test, Y_test)
     
     clf = naive_bayes(X_train, Y_train, X_test, Y_test)
     joblib.dump(clf, "./models/latest_build.pkl")
