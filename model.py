@@ -95,7 +95,7 @@ def main():
 
     # Remove grade report 2
     X.drop(["G2"], axis = 1, inplace=True)
-    print("\n\nModel Accuracy Knowing Only G1 Scores")
+    print("\n\nModel Accuracy Knowing Only G1 Score")
     print("=====================================")
     train_and_score(X, y)
 
