@@ -16,14 +16,24 @@ To be able to preemptively assess which students may need the most attention is,
 
 ## Process ##
 
-The target value is `G3`, which, according to the accompanying paper of the dataset, can be binned into a passing or failing classification. If `G3` is greater than or equal to 10, then the student passes. Otherwise, she fails.
+The target value is `G3`, which, according to the accompanying paper of the dataset, can be binned into a passing or failing classification. If `G3` is greater than or equal to 10, then the student passes. Otherwise, she fails. Likewise, the `G1` and `G2` features are binned in the same manner.
 
-The data can be reduced to 4 fundamental features:
+The data can be reduced to 4 fundamental features, in order of importance:
 1. `G2` score
 2. `G1` score
 3. `School`
 4. `Absences`
 
-A support vector linear classifier was used as the model, with a regularization factor of 100.
+When no grade knowledge is known, `School` and `Absences` capture most of the predictive basis. As grade knowledge becomes available, `G1` and `G2` scores alone are enough to achieve 90% accuracy. The model uses only 2 features at a time.
 
-On average, the resulting predictive capacity starts at 70% accuracy with no grade knowledge, but improves to nearly 88% accuracy with `G1` and `G2` grade knowledge.
+The model is a linear support vector machine with a regularization factor of 100. This model performed the best, when compared to other models, such as naive bayes and random forest classifiers.
+
+## Results ##
+
+The following results are results averaged over 5 trials.
+
+| Features Considered 	| G1 & G2 	| G1 & School 	| School & Absences 	|
+|---------------------	|:-------:	|:-----------:	|:-----------------:	|
+| Model Accuracy      	|  0.9165 	|       .8285 	|            0.6847 	|
+| False Pass Rate     	|   0.096 	|        0.12 	|             0.544 	|
+| False Fail Rate     	|   0.074 	|      0.1481 	|            0.2185 	|
