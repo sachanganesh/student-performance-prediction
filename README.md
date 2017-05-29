@@ -30,7 +30,7 @@ The model is a linear support vector machine with a regularization factor of 100
 
 ## Results ##
 
-The following results are results averaged over 5 trials.
+The following results have been averaged over 5 trials.
 
 | Features Considered 	| G1 & G2 	| G1 & School 	| School & Absences 	|
 |---------------------	|:-------:	|:-----------:	|:-----------------:	|
