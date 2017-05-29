@@ -54,11 +54,11 @@ def train_and_score(X, y):
     X_train, X_test, y_train, y_test = split_data(X, y)
 
     clf = Pipeline([
-        ('reduce_dim', SelectKBest(chi2, k=2)),
+        ('reduce_dim', SelectKBest(chi2, k=4)),
         ('train', LinearSVC(C=100))
     ])
 
-    scores = cross_val_score(clf, X, y, cv=5, n_jobs=2)
+    scores = cross_val_score(clf, X_train, y_train, cv=5, n_jobs=2)
     print("Mean Model Accuracy:", np.array(scores).mean())
 
     clf.fit(X_train, y_train)
