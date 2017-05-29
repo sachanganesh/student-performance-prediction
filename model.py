@@ -1,7 +1,7 @@
 """
 
-The goal of this experiment is to develop a model that will predict (to a certain level of acceptable accuracy) the cumulative grades of students learning mathematics over a year (two semesters).
-The features will consist of all given features within the dataset excluding the GX factors that represent semester grades. G3 will be the feature to be predicted.
+The goal of this experiment is to develop a model that will predict (to a certain level of acceptable accuracy) whether a student will pass or fail a mathematics course over a year (two semesters).
+The features will consist of all given features within the dataset excluding the GX factors that represent semester grades. G3 will be the target feature.
 
 """
 
@@ -24,7 +24,7 @@ from sklearn.svm import LinearSVC # Support Vector Machine Classifier model
 
 """ Split Data into Training and Testing Sets """
 def split_data(X, Y):
-    return train_test_split(X, Y, test_size=0.3, random_state=17)
+    return train_test_split(X, Y, test_size=0.2, random_state=17)
 
 """ Confusion Matrix """
 def confuse(y_true, y_pred):
@@ -54,7 +54,7 @@ def train_and_score(X, y):
     X_train, X_test, y_train, y_test = split_data(X, y)
 
     clf = Pipeline([
-        ('reduce_dim', SelectKBest(chi2, k=4)),
+        ('reduce_dim', SelectKBest(chi2, k=2)),
         ('train', LinearSVC(C=100))
     ])
 
@@ -70,14 +70,23 @@ def train_and_score(X, y):
 def main():
     print("\nStudent Performance Prediction")
 
-
     # For each feature, encode to categorical values
     class_le = LabelEncoder()
     for column in df[["school", "sex", "address", "famsize", "Pstatus", "Mjob", "Fjob", "reason", "guardian", "schoolsup", "famsup", "paid", "activities", "nursery", "higher", "internet", "romantic"]].columns:
         df[column] = class_le.fit_transform(df[column].values)
 
-    # Encode G3 as pass or fail binary values
+    # Encode G1, G2, G3 as pass or fail binary values
     for i, row in df.iterrows():
+        if row["G1"] >= 10:
+            df["G1"][i] = 1
+        else:
+            df["G1"][i] = 0
+
+        if row["G2"] >= 10:
+            df["G2"][i] = 1
+        else:
+            df["G2"][i] = 0
+
         if row["G3"] >= 10:
             df["G3"][i] = 1
         else:
