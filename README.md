@@ -39,6 +39,8 @@ The following results have been averaged over 5 trials.
 | False Pass Rate     	|   0.096 	|        0.12 	|             0.544 	|
 | False Fail Rate     	|   0.074 	|      0.1481 	|            0.2185 	|
 
+[Why these metrics?](https://github.com/sachanganesh/student-performance-prediction/issues/1#issuecomment-508577754)
+
 ## Discussion ##
 
 Without any prior academic performance in similar courses, the problem is difficult to solve; however, my model achieves 68% accuracy using only the school the student attends and the number of absences that they accrue to judge whether or not they fail. What is interesting is that my model, with these parameters, has a false pass rate of over 50%, meaning that it classifies more than half of the students who end up failing as passing instead. This number falls drastically as more information becomes available and better parameters are used, but it highlights one major area of improvement for the model.
